@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PostModule } from './post/post.module';
+import { UserModule } from './user/user.module';
 import * as entities from './entities';
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import * as entities from './entities';
         synchronize: configService.get<string>('NODE_ENV') === 'local',
       }),
     }),
+    PostModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
