@@ -6,6 +6,7 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './User.entity';
 import { Category } from './Category.entity';
@@ -19,13 +20,23 @@ export class Post {
   @Column()
   title: string;
 
-  @Column()
+  @Column('text')
   content: string;
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @Column({ unique: true, nullable: false })
+  userId: number;
+
+  @Column({ unique: true, nullable: false })
+  categoryId: number;
+
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Category, (category) => category.posts)
+  @ManyToOne(() => Category, (category) => category.posts, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'categoryId' })
   category: Category;
 
   @OneToMany(() => Comment, (comment) => comment.post)

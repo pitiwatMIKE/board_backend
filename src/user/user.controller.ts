@@ -16,6 +16,7 @@ import { UserDto } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth-guard';
+import { JwtPayload } from 'src/interfaces/jwt-payload.interface';
 
 @ApiTags('User')
 @Controller('user')
@@ -34,7 +35,10 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiResponse({ status: 200, type: UserDto })
-  async findOne(@Param('id') id: number, @Request() req): Promise<UserDto> {
+  async findOne(
+    @Param('id') id: number,
+    @Request() req: { user: JwtPayload },
+  ): Promise<UserDto> {
     if (req?.user?.id !== Number(id)) {
       throw new ForbiddenException('Forbidden');
     }
