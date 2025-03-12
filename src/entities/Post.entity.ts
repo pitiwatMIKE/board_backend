@@ -23,10 +23,10 @@ export class Post {
   @Column('text')
   content: string;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ nullable: false })
   userId: number;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ nullable: false })
   categoryId: number;
 
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })

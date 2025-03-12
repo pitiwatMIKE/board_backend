@@ -12,6 +12,7 @@ import { ApiResponse } from '@nestjs/swagger';
 import { CategoryDto } from './dto/category.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('category')
 export class CategoryController {
@@ -20,13 +21,19 @@ export class CategoryController {
   @Get()
   @ApiResponse({ status: 200, type: [CategoryDto] })
   async findAll(): Promise<CategoryDto[]> {
-    return this.categoryService.findAll();
+    const categories = await this.categoryService.findAll();
+    return plainToInstance(CategoryDto, categories, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Get(':id')
   @ApiResponse({ status: 200, type: CategoryDto })
   async findOne(@Param('id') id: number): Promise<CategoryDto> {
-    return this.categoryService.findOne(id);
+    const category = await this.categoryService.findOne(id);
+    return plainToInstance(CategoryDto, category, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Post()
@@ -35,7 +42,10 @@ export class CategoryController {
     type: CategoryDto,
   })
   async create(@Body() category: CreateCategoryDto): Promise<CategoryDto> {
-    return this.categoryService.create(category);
+    const data = await this.categoryService.create(category);
+    return plainToInstance(CategoryDto, category, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Put(':id')
@@ -47,7 +57,10 @@ export class CategoryController {
     @Param('id') id: number,
     @Body() category: UpdateCategoryDto,
   ): Promise<CategoryDto> {
-    return this.categoryService.update(id, category);
+    const data = await this.categoryService.update(id, category);
+    return plainToInstance(CategoryDto, data, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Delete(':id')

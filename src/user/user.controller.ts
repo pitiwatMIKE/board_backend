@@ -17,6 +17,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth-guard';
 import { JwtPayload } from 'src/interfaces/jwt-payload.interface';
+import { plainToInstance } from 'class-transformer';
 
 @ApiTags('User')
 @Controller('user')
@@ -28,7 +29,8 @@ export class UserController {
   @ApiBearerAuth()
   @ApiResponse({ status: 200, type: [UserDto] })
   async findAll(): Promise<UserDto[]> {
-    return this.userService.findAll();
+    const users = await this.userService.findAll();
+    return plainToInstance(UserDto, users, { excludeExtraneousValues: true });
   }
 
   @Get(':id')
@@ -42,7 +44,8 @@ export class UserController {
     if (req?.user?.id !== Number(id)) {
       throw new ForbiddenException('Forbidden');
     }
-    return this.userService.findOne(id);
+    const user = await this.userService.findOne(id);
+    return plainToInstance(UserDto, user, { excludeExtraneousValues: true });
   }
 
   @Post()
@@ -52,7 +55,7 @@ export class UserController {
   })
   async create(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
     const user = await this.userService.create(createUserDto);
-    return user;
+    return plainToInstance(UserDto, user, { excludeExtraneousValues: true });
   }
 
   @Put(':id')
@@ -64,7 +67,8 @@ export class UserController {
     @Param('id') id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserDto> {
-    return this.userService.update(id, updateUserDto);
+    const user = await this.userService.update(id, updateUserDto);
+    return plainToInstance(UserDto, user, { excludeExtraneousValues: true });
   }
 
   @Delete(':id')
