@@ -43,7 +43,7 @@ export class CategoryController {
   })
   async create(@Body() category: CreateCategoryDto): Promise<CategoryDto> {
     const data = await this.categoryService.create(category);
-    return plainToInstance(CategoryDto, category, {
+    return plainToInstance(CategoryDto, data, {
       excludeExtraneousValues: true,
     });
   }

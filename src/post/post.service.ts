@@ -16,11 +16,19 @@ export class PostService {
   ) {}
 
   async findAll(): Promise<Post[]> {
-    return this.postRepository.find();
+    return this.postRepository.find({
+      relations: ['category'],
+      order: { createdAt: 'DESC' },
+    });
   }
 
   async findOne(id: number): Promise<Post> {
-    const post = await this.postRepository.findOneBy({ id: id });
+    const post = await this.postRepository.findOne({
+      where: { id },
+      relations: ['category'],
+    });
+
+    console.log(post);
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
@@ -29,11 +37,12 @@ export class PostService {
 
   async create(post: CreatePostDto, payload: JwtPayload): Promise<Post> {
     const category = await this.categoryService.findOne(post.categoryId);
-    return this.postRepository.save({
+    const data = await this.postRepository.save({
       ...post,
       userId: payload.id,
       categoryId: category.id,
     });
+    return this.findOne(data.id);
   }
 
   async update(
