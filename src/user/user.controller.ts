@@ -2,16 +2,20 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Post,
   Put,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import {  ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserDto } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtAuthGuard } from 'src/guards/jwt-auth-guard';
 
 @ApiTags('User')
 @Controller('user')
@@ -19,14 +23,21 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, type: [UserDto] })
   async findAll(): Promise<UserDto[]> {
     return this.userService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiResponse({ status: 200, type: UserDto })
-  async findOne(@Param('id') id: number): Promise<UserDto> {
+  async findOne(@Param('id') id: number, @Request() req): Promise<UserDto> {
+    if (req?.user?.id !== Number(id)) {
+      throw new ForbiddenException('Forbidden');
+    }
     return this.userService.findOne(id);
   }
 

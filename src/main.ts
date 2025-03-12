@@ -9,11 +9,12 @@ async function bootstrap() {
     .setTitle('My API')
     .setDescription('The API documentation for my NestJS project')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('swagger', app, document);
 
   await app.listen(process.env.PORT ?? 3001);
 }
