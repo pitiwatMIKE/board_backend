@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { UserDto } from './user.dto';
+import { Expose, Type } from 'class-transformer';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -17,4 +19,15 @@ export class CreateUserDto {
   })
   @IsOptional()
   avatar: string;
+}
+
+export class CreateUserResponse {
+  @ApiProperty({ type: String })
+  @Expose()
+  token: string;
+
+  @ApiProperty({ type: UserDto })
+  @Expose()
+  @Type(() => UserDto)
+  user: UserDto;
 }

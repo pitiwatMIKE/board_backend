@@ -10,7 +10,7 @@ import {
 import { UserService } from './user.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserDto } from './dto/user.dto';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, CreateUserResponse } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { plainToInstance } from 'class-transformer';
 
@@ -36,11 +36,15 @@ export class UserController {
   @Post()
   @ApiResponse({
     status: 201,
-    type: UserDto,
+    type: CreateUserResponse,
   })
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
+  async create(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<CreateUserResponse> {
     const user = await this.userService.create(createUserDto);
-    return plainToInstance(UserDto, user, { excludeExtraneousValues: true });
+    return plainToInstance(CreateUserResponse, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Put(':id')

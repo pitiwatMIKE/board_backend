@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,12 +10,15 @@ import { User } from 'src/entities';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -37,7 +42,7 @@ export class UserService {
     return user;
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto) {
     const existingUser = await this.userRepository.findOne({
       where: { username: createUserDto.username },
     });
@@ -45,8 +50,15 @@ export class UserService {
       throw new ConflictException('Username already exists');
     }
 
-    const user = this.userRepository.create(createUserDto);
-    return this.userRepository.save(user);
+    const user = await this.userRepository.save({
+      ...createUserDto,
+    });
+
+    const loginData = await this.authService.login(user);
+    return {
+      token: loginData.token,
+      user,
+    };
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
