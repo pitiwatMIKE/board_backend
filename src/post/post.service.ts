@@ -7,7 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from 'src/entities/post.entity';
 import { Like, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
-import { JwtPayload } from 'src/interfaces/jwt-payload.interface';
 import { CategoryService } from 'src/category/category.service';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { SearchPostDto } from './dto/search-post.dto';
@@ -83,11 +82,11 @@ export class PostService {
     return post;
   }
 
-  async create(post: CreatePostDto, payload: JwtPayload): Promise<Post> {
+  async create(post: CreatePostDto, userId: number): Promise<Post> {
     const category = await this.categoryService.findOne(post.categoryId);
     const data = await this.postRepository.save({
       ...post,
-      userId: payload.id,
+      userId: userId,
       categoryId: category.id,
     });
     return this.findOne(data.id);

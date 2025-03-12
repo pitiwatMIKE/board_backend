@@ -77,7 +77,7 @@ export class PostController {
     @Body() post: CreatePostDto,
     @Request() request: { user: JwtPayload },
   ): Promise<PostDto> {
-    const data = await this.postService.create(post, request.user);
+    const data = await this.postService.create(post, request.user.id);
     return plainToInstance(PostDto, data, { excludeExtraneousValues: true });
   }
 

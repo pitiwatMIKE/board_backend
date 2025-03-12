@@ -10,5 +10,6 @@ import { CategoryModule } from 'src/category/category.module';
   imports: [TypeOrmModule.forFeature([Post]), CategoryModule],
   providers: [PostService, JwtService],
   controllers: [PostController],
+  exports: [PostService],
 })
 export class PostModule {}

@@ -5,6 +5,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Post } from './post.entity';
@@ -17,11 +18,11 @@ export class Comment {
   @Column('text')
   content: string;
 
-  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
-  user: User;
+  @Column()
+  userId: number;
 
-  @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
-  post: Post;
+  @Column()
+  postId: number;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
@@ -32,4 +33,12 @@ export class Comment {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
+  @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'postId' })
+  post: Post;
 }
