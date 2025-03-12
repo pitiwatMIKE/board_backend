@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   Param,
   Post,
@@ -10,8 +9,6 @@ import {
   Query,
   Request,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { ApiBearerAuth, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -22,6 +19,7 @@ import { JwtAuthGuard } from 'src/guards/jwt-auth-guard';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { plainToInstance } from 'class-transformer';
 import { SearchPostDto, SearchPostResponseDto } from './dto/search-post.dto';
+import { MyPostDto, MyPostResponseDto } from './dto/my-post.dto';
 
 @ApiTags('Post')
 @Controller('post')
@@ -29,12 +27,28 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get('search')
-  @UsePipes(new ValidationPipe({ transform: true }))
   @ApiResponse({ status: 200, type: SearchPostResponseDto })
   async searchPosts(
     @Query() query: SearchPostDto,
   ): Promise<SearchPostResponseDto> {
-    return this.postService.searchPosts(query);
+    const data = await this.postService.searchPosts(query);
+    return plainToInstance(SearchPostResponseDto, data, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  @Get('my-posts')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, type: MyPostDto })
+  async myPosts(
+    @Query() query: MyPostDto,
+    @Request() req: { user: JwtPayload },
+  ): Promise<MyPostResponseDto> {
+    const data = await this.postService.findMyPosts(query, req.user.id);
+    return plainToInstance(MyPostResponseDto, data, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Get()

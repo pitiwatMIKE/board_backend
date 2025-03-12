@@ -11,6 +11,7 @@ import { JwtPayload } from 'src/interfaces/jwt-payload.interface';
 import { CategoryService } from 'src/category/category.service';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { SearchPostDto } from './dto/search-post.dto';
+import { MyPostDto } from './dto/my-post.dto';
 
 @Injectable()
 export class PostService {
@@ -26,6 +27,27 @@ export class PostService {
 
     const [data, totalRecord] = await this.postRepository.findAndCount({
       where,
+      order: { [sort]: order },
+      take: limit,
+      skip: (page - 1) * limit,
+      relations: ['category'],
+    });
+
+    return {
+      data,
+      meta: {
+        totalRecord,
+        currentPage: page,
+        totalPage: Math.ceil(totalRecord / limit),
+      },
+    };
+  }
+
+  async findMyPosts(query: MyPostDto, userId: number) {
+    const { limit, page, sort, order } = query;
+
+    const [data, totalRecord] = await this.postRepository.findAndCount({
+      where: { userId: userId },
       order: { [sort]: order },
       take: limit,
       skip: (page - 1) * limit,
