@@ -8,9 +8,9 @@ import {
   UpdateDateColumn,
   JoinColumn,
 } from 'typeorm';
-import { User } from './User.entity';
-import { Category } from './Category.entity';
-import { Comment } from './Comment.entity';
+import { User } from './user.entity';
+import { Category } from './category.entity';
+import { Comment } from './comment.entity';
 
 @Entity()
 export class Post {

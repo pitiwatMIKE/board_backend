@@ -1,6 +1,6 @@
-import { User } from './User.entity';
-import { Comment } from './Comment.entity';
-import { Category } from './Category.entity';
-import { Post } from './Post.entity';
+import { User } from './user.entity';
+import { Comment } from './comment.entity';
+import { Category } from './category.entity';
+import { Post } from './post.entity';
 
 export { User, Post, Comment, Category };

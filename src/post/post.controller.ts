@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { PostService } from './post.service';
-import { Post } from 'src/entities/Post.entity';
+import { Post } from 'src/entities/post.entity';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PostDto } from './dto/post.dto';
 
