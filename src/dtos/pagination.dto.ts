@@ -7,7 +7,6 @@ export class PaginationDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  @Min(1)
   limit = 10;
 
   @ApiPropertyOptional({ example: '1', type: Number })

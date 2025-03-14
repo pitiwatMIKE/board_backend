@@ -26,17 +26,11 @@ export class SearchPostDto extends PaginationDto {
   userId?: number;
 }
 
-class SearPost extends PostDto {
-  @ApiProperty()
-  @Expose()
-  commentCount: number;
-}
-
 export class SearchPostResponseDto {
-  @ApiProperty({ type: [SearPost] })
+  @ApiProperty({ type: [PostDto] })
   @Expose()
-  @Type(() => SearPost)
-  data: SearPost[];
+  @Type(() => PostDto)
+  data: PostDto[];
 
   @ApiProperty({ type: MetaDto })
   @Expose()

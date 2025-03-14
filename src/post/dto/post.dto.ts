@@ -24,6 +24,10 @@ export class PostDto {
   @Expose()
   updatedAt: Date;
 
+  @ApiProperty()
+  @Expose()
+  commentCount: number;
+
   @ApiProperty({ type: () => CategoryDto })
   @Expose()
   @Type(() => CategoryDto)

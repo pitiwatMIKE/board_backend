@@ -28,8 +28,6 @@ export class PostService {
       .leftJoinAndSelect('post.user', 'user')
       .leftJoin('post.comments', 'comment')
       .loadRelationCountAndMap('post.commentCount', 'post.comments')
-      .take(limit)
-      .skip((page - 1) * limit)
       .orderBy(`post.${sort}`, order as 'ASC' | 'DESC');
 
     if (search) {
@@ -44,14 +42,18 @@ export class PostService {
       qb.andWhere('post.categoryId = :categoryId', { categoryId });
     }
 
+    if (limit !== -1) {
+      qb.take(limit).skip((page - 1) * limit);
+    }
+
     const [data, totalRecord] = await qb.getManyAndCount();
 
     return {
       data,
       meta: {
         totalRecord,
-        currentPage: page,
-        totalPage: Math.ceil(totalRecord / limit),
+        currentPage: limit === -1 ? 1 : page,
+        totalPage: limit === -1 ? 1 : Math.ceil(totalRecord / limit),
       },
     };
   }
@@ -85,14 +87,19 @@ export class PostService {
   }
 
   async findOne(id: number): Promise<Post> {
-    const post = await this.postRepository.findOne({
-      where: { id },
-      relations: ['category', 'user'],
-    });
+    const post = await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.category', 'category')
+      .leftJoinAndSelect('post.user', 'user')
+      .leftJoin('post.comments', 'comment')
+      .loadRelationCountAndMap('post.commentCount', 'post.comments')
+      .where('post.id = :id', { id })
+      .getOne();
 
     if (!post) {
       throw new NotFoundException(`Post with ID ${id} not found`);
     }
+
     return post;
   }
 
