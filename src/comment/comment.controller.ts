@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -17,22 +16,17 @@ import { ApiBearerAuth, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { JwtPayload } from 'src/interfaces/jwt-payload.interface';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth-guard';
-import {
-  CommentPostIdDto,
-  CommentPostIdResponseDto,
-} from './dto/comment-post-id.dto';
+('./dto/comment-post-id.dto');
 
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @Get('by-post')
-  @ApiResponse({ status: 200, type: CommentPostIdResponseDto })
-  async findCommentsByPostId(
-    @Query() query: CommentPostIdDto,
-  ): Promise<CommentPostIdResponseDto> {
-    const comments = await this.commentService.findCommentsByPostId(query);
-    const data = plainToInstance(CommentPostIdResponseDto, comments, {
+  @Get('by-post/:postId')
+  @ApiResponse({ status: 200, type: CommentDto })
+  async findCommentsByPostId(@Param('postId') postId: number): Promise<CommentDto[]> {
+    const comments = await this.commentService.findCommentsByPostId(postId);
+    const data = plainToInstance(CommentDto, comments, {
       excludeExtraneousValues: true,
     });
 

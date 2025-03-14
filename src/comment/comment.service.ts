@@ -8,7 +8,6 @@ import { Comment } from 'src/entities/comment.entity';
 import { PostService } from 'src/post/post.service';
 import { Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { CommentPostIdDto } from './dto/comment-post-id.dto';
 
 @Injectable()
 export class CommentService {
@@ -18,25 +17,14 @@ export class CommentService {
     private readonly postService: PostService,
   ) {}
 
-  async findCommentsByPostId(query: CommentPostIdDto) {
-    const { limit, page, sort, order, postId } = query;
-
-    const [data, totalRecord] = await this.commentRepository.findAndCount({
+  async findCommentsByPostId(postId: number): Promise<Comment[]> {
+    const data = await this.commentRepository.find({
       where: { postId },
-      order: { [sort]: order },
-      take: limit,
-      skip: (page - 1) * limit,
+      order: { createdAt: 'DESC' },
       relations: ['user'],
     });
 
-    return {
-      data,
-      meta: {
-        totalRecord,
-        currentPage: page,
-        totalPage: Math.ceil(totalRecord / limit),
-      },
-    };
+    return data;
   }
 
   async findAll(): Promise<Comment[]> {
