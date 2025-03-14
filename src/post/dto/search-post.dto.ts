@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { IsOptional, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString, Min } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PostDto } from './post.dto';
 import { MetaDto } from 'src/dtos/meta.dto';
@@ -10,13 +10,33 @@ export class SearchPostDto extends PaginationDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @ApiPropertyOptional({ type: Number })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
+  categoryId?: number;
+
+  @ApiPropertyOptional({ type: Number })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
+  userId?: number;
+}
+
+class SearPost extends PostDto {
+  @ApiProperty()
+  @Expose()
+  commentCount: number;
 }
 
 export class SearchPostResponseDto {
-  @ApiProperty({ type: [PostDto] })
+  @ApiProperty({ type: [SearPost] })
   @Expose()
-  @Type(() => PostDto)
-  data: PostDto[];
+  @Type(() => SearPost)
+  data: SearPost[];
 
   @ApiProperty({ type: MetaDto })
   @Expose()

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { CategoryDto } from 'src/category/dto/category.dto';
+import { UserDto } from 'src/user/dto/user.dto';
 
 export class PostDto {
   @ApiProperty()
@@ -27,4 +28,9 @@ export class PostDto {
   @Expose()
   @Type(() => CategoryDto)
   category: CategoryDto;
+
+  @ApiProperty({ type: UserDto })
+  @Expose()
+  @Type(() => UserDto)
+  user: UserDto;
 }

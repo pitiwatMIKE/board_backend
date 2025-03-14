@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from 'src/entities/post.entity';
-import { Like, Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { CategoryService } from 'src/category/category.service';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -21,16 +21,30 @@ export class PostService {
   ) {}
 
   async searchPosts(query: SearchPostDto) {
-    const { search, limit, page, sort, order } = query;
-    const where = search ? { title: Like(`%${search}%`) } : {};
+    const { search, categoryId, userId, limit, page, sort, order } = query;
+    const qb = this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.category', 'category')
+      .leftJoinAndSelect('post.user', 'user')
+      .leftJoin('post.comments', 'comment')
+      .loadRelationCountAndMap('post.commentCount', 'post.comments')
+      .take(limit)
+      .skip((page - 1) * limit)
+      .orderBy(`post.${sort}`, order as 'ASC' | 'DESC');
 
-    const [data, totalRecord] = await this.postRepository.findAndCount({
-      where,
-      order: { [sort]: order },
-      take: limit,
-      skip: (page - 1) * limit,
-      relations: ['category'],
-    });
+    if (search) {
+      qb.where('post.title ILIKE :search', { search: `%${search}%` });
+    }
+
+    if (userId) {
+      qb.andWhere('post.userId = :userId', { userId });
+    }
+
+    if (categoryId) {
+      qb.andWhere('post.categoryId = :categoryId', { categoryId });
+    }
+
+    const [data, totalRecord] = await qb.getManyAndCount();
 
     return {
       data,
@@ -50,7 +64,7 @@ export class PostService {
       order: { [sort]: order },
       take: limit,
       skip: (page - 1) * limit,
-      relations: ['category'],
+      relations: ['category', 'user'],
     });
 
     return {
@@ -65,7 +79,7 @@ export class PostService {
 
   async findAll(): Promise<Post[]> {
     return this.postRepository.find({
-      relations: ['category'],
+      relations: ['category', 'user'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -73,7 +87,7 @@ export class PostService {
   async findOne(id: number): Promise<Post> {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['category'],
+      relations: ['category', 'user'],
     });
 
     if (!post) {
