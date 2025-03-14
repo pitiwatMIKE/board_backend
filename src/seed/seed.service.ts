@@ -28,19 +28,22 @@ export class SeedService {
   async category() {
     const categories: Partial<Category>[] = [
       {
-        name: 'Category 1',
+        name: 'History',
       },
       {
-        name: 'Category 2',
+        name: 'Food',
       },
       {
-        name: 'Category 3',
+        name: 'Pets',
       },
       {
-        name: 'Category 4',
+        name: 'Fashion',
       },
       {
-        name: 'Category 5',
+        name: 'Exercise',
+      },
+      {
+        name: 'Others',
       },
     ];
     await this.clearTable('category');
@@ -54,7 +57,7 @@ export class SeedService {
         avatar: 'https://i.pravatar.cc/150?img=1',
       },
       {
-        username: 'user',
+        username: 'user1',
         avatar: 'https://i.pravatar.cc/150?img=2',
       },
       {
@@ -79,28 +82,30 @@ export class SeedService {
   }
 
   async seedPosts() {
+    const exampleContent =
+      'Tall, athletic, handsome with cerulean eyes, he was the kind of hyper-ambitious kid other kids loved to hate and just the type to make a big wager with no margin for error. But on the night before the S.A.T., his father took pity on him and canceled the bet. “I would’ve lost it,” Ackman concedes. He got a 780 on the verbal and a 750 on the math. “One wrong on the verbal, three wrong on the math,” he muses. “I’m still convinced some of the questions were wrong.”';
     const posts: Partial<Post>[] = [
       {
-        title: 'Post 1',
-        content: 'Content 1',
+        title: 'The Big Short War',
+        content: exampleContent,
         userId: 1,
         categoryId: 1,
       },
       {
-        title: 'Post 2',
-        content: 'Content 2',
+        title: 'The Beginning of the End of the World',
+        content: exampleContent,
         userId: 2,
         categoryId: 2,
       },
       {
-        title: 'Post 3',
-        content: 'Content 3',
+        title: 'The Mental Health Benefits of Exercise',
+        content: exampleContent,
         userId: 3,
         categoryId: 3,
       },
       {
-        title: 'Post 4',
-        content: 'Content 4',
+        title: 'What Makes a Man Betray His Country?',
+        content: exampleContent,
         userId: 4,
         categoryId: 4,
       },
@@ -110,24 +115,25 @@ export class SeedService {
   }
 
   async seedComments() {
+    const exampleComment = `Lorem ipsum dolor sit amet consectetur. Purus cursus vel est a pretium quam imperdiet. Tristique auctor sed semper nibh odio iaculis sed aliquet. Amet mollis eget morbi feugiat mi risus eu. Tortor sed sagittis convallis auctor.`;
     const comments: Partial<Comment>[] = [
       {
-        content: 'Comment 1',
+        content: exampleComment,
         userId: 1,
         postId: 1,
       },
       {
-        content: 'Comment 2',
+        content: exampleComment,
         userId: 2,
         postId: 1,
       },
       {
-        content: 'Comment 3',
+        content: exampleComment,
         userId: 3,
         postId: 2,
       },
       {
-        content: 'Comment 4',
+        content: exampleComment,
         userId: 4,
         postId: 2,
       },
