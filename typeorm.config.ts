@@ -18,5 +18,8 @@ export default new DataSource({
   entities: Object.values(entities),
   migrations: ['./src/migrations/*.ts'],
   migrationsTableName: 'migrations_typeorm',
-  synchronize: false, // เปิดใช้งานเฉพาะตอน development
+  synchronize: false,
+  extra: {
+    socketPath: configService.get<string>('DATABASE_SOCKET_PATH'),
+  }
 });

@@ -27,6 +27,9 @@ import * as entities from './entities';
         database: configService.get<string>('DATABASE_NAME'),
         entities: Object.values(entities),
         synchronize: configService.get<string>('NODE_ENV') === 'local',
+        extra: {
+          socketPath: configService.get<string>('DATABASE_SOCKET_PATH'),
+        }
       }),
     }),
     PostModule,
